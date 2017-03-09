@@ -1,5 +1,5 @@
       
-# PathView
+# DashboarsView
 Android draw View
 #![image](https://github.com/crossll/PathView/blob/master/pathview.gif) 
 # HOW TO USE
