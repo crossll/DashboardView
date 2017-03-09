@@ -1,7 +1,7 @@
       
 # DashboarsView
 Android draw View
-#![image](https://github.com/crossll/PathView/blob/master/pathview.gif) 
+#![image](https://github.com/crossll/DashboardView/blob/master/dashboarsview.gif) 
 # HOW TO USE
 ## xml
       <cross.com.dashboardview.ui.DashboarsView
