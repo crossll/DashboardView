@@ -31,6 +31,13 @@ public class DashboarsView extends View {
     private List<HashMap<String, Object>> ListMethod = new ArrayList<>();
     private float percent = 0;
     private ValueAnimator valueAnimator;
+    private addPrecentChange addprecentchange;
+    public void setTextValue(String textValue) {
+        TextValue = textValue;
+    }
+
+    private String TextValue = "";
+
     public DashboarsView(Context context) {
         super(context);
     }
@@ -62,7 +69,8 @@ public class DashboarsView extends View {
         canvas.translate(mWidth / 2, mHeigh / 2);
         Builder();
     }
-          //画圆弧
+
+    //画圆弧
     private void Arc(int radius, float startAngle, float sweepAngle, float Width, int Color) {
         RectF rectF = new RectF(-radius, -radius, radius, radius);
         Paint paint = new Paint();
@@ -73,7 +81,8 @@ public class DashboarsView extends View {
         paint.setDither(true);
         canvas.drawArc(rectF, startAngle - 90, sweepAngle, false, paint);
     }
-          //画刻度
+
+    //画刻度
     private void Scale(float startX, float stopX, float startAngle, float sweepAngle, float Width, int Color, int Number) {
         Paint paint = new Paint();
         paint.setAntiAlias(true);
@@ -91,7 +100,8 @@ public class DashboarsView extends View {
         }
         canvas.restore();
     }
-           //画刻度值
+
+    //画刻度值
     private void ScaleText(float startY, float startAngle, float sweepAngle, float TextSize, int Color, String[] textScale) {
         Paint paint = new Paint();
         paint.setAntiAlias(true);
@@ -112,7 +122,8 @@ public class DashboarsView extends View {
         }
         canvas.restore();
     }
-          //画游标
+
+    //画游标
     private void Pointer(float startAngle, float sweepAngle, int Color) {
         Paint paint = new Paint();
         paint.setAntiAlias(true);
@@ -133,7 +144,8 @@ public class DashboarsView extends View {
         canvas.drawPath(path, paint);
         canvas.restore();
     }
-         //画多个圆弧
+
+    //画多个圆弧
     private void Arcs(int radius, float[][] Angle, float Width, int[] Color) {
         RectF rectF = new RectF(-radius, -radius, radius, radius);
         Paint paint = new Paint();
@@ -146,7 +158,8 @@ public class DashboarsView extends View {
             canvas.drawArc(rectF, Angle[i][0] - 90, Angle[i][1], false, paint);
         }
     }
-          //添加背景图片
+
+    //添加背景图片
     private void BitmapBackground(double widthPrecent, int id) {
         Resources r = this.getContext().getResources();
         Bitmap bmp = BitmapFactory.decodeResource(r, id);
@@ -158,7 +171,8 @@ public class DashboarsView extends View {
         Rect mDestRect = new Rect(left, top, right, bottom);
         canvas.drawBitmap(bmp, mSrcRect, mDestRect, null);
     }
-          //添加游标图片
+
+    //添加游标图片
     private void BitmapPointer(float startAngle, float sweepAngle, double widthPercent, double heighPercent, int id) {
         Resources r = this.getContext().getResources();
         Bitmap bmp = BitmapFactory.decodeResource(r, id);
@@ -173,6 +187,20 @@ public class DashboarsView extends View {
         Rect mDestRect = new Rect(left, top, right, bottom);
         canvas.drawBitmap(bmp, mSrcRect, mDestRect, null);
         canvas.restore();
+    }
+
+    private void TextValue(float TextSize, int Color) {
+        Paint pain = new Paint();
+        pain.setAntiAlias(true);
+        pain.setStyle(Paint.Style.FILL);
+        pain.setDither(true);
+        pain.setTextSize(TextSize);
+        pain.setColor(Color);
+        Paint.FontMetricsInt fontMetricsInt = pain.getFontMetricsInt();
+        float MeasuredHeight = (fontMetricsInt.bottom - fontMetricsInt.top) * 2;
+        int baseline = (int) (BaseWidth / 4 + (MeasuredHeight / 2) + (-MeasuredHeight - fontMetricsInt.bottom + fontMetricsInt.top) / 2 - fontMetricsInt.top);
+        canvas.drawText(TextValue, -getTextViewLength(pain, TextValue) / 2, baseline, pain);
+
     }
 
     private float getTextViewLength(Paint paint, String text) {
@@ -216,6 +244,10 @@ public class DashboarsView extends View {
                     BitmapPointer((float) ParameterMap.get("startAngle"), (float) ParameterMap.get("sweepAngle"),
                             (double) ParameterMap.get("widthPercent"), (double) ParameterMap.get("heighPercent"),
                             (int) ParameterMap.get("id"));
+                    break;
+                case 8:
+                    TextValue(getWidth((double) ParameterMap.get("widthPercent")),
+                            (int) ParameterMap.get("Color"));
                     break;
             }
         }
@@ -296,6 +328,15 @@ public class DashboarsView extends View {
         ListMethod.add(ParameterMap);
     }
 
+    public void DrawTextValue(double widthPercent, int Color) {
+        HashMap<String, Object> ParameterMap = new HashMap<>();
+        ParameterMap.put("widthPercent", widthPercent);
+        ParameterMap.put("Color", Color);
+        ParameterMap.put("type", 8);
+        ListMethod.add(ParameterMap);
+
+    }
+
     private int getRadius(double percent) {
         return (int) (percent * BaseWidth);
     }
@@ -313,6 +354,7 @@ public class DashboarsView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 DashboarsView.this.percent = (float) animation.getAnimatedValue();
+                addprecentchange.PrecentChange((float) animation.getAnimatedValue());
                 invalidate();
 
             }
@@ -327,27 +369,16 @@ public class DashboarsView extends View {
         valueAnimator.start();
 
     }
+
     public void setAnimator(float percent) {
-        if (valueAnimator != null && valueAnimator.isRunning()) {
-            valueAnimator.cancel();
-        }
-        valueAnimator = ValueAnimator.ofFloat(percent, percent).setDuration(100);
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                DashboarsView.this.percent = (float) animation.getAnimatedValue();
-                invalidate();
-
-            }
-
-        });
-        valueAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-            }
-        });
-        valueAnimator.start();
-
+        DashboarsView.this.percent = percent;
+        invalidate();
     }
+    public interface  addPrecentChange{
+        void PrecentChange(float percent);
+    }
+    public void addPrecentChange(addPrecentChange maddPrecentChange){
+        addprecentchange=maddPrecentChange;
+    }
+
 }

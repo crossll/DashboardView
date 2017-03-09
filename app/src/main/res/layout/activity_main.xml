@@ -14,15 +14,27 @@
         android:layout_weight="1"
         android:id="@+id/dashboard"
        />
-    <LinearLayout
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="25dp" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn"/>
+    <cross.com.dashboardview.ui.DashboarsView
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
-        android:id="@+id/linear"
-        android:orientation="vertical"
+        android:id="@+id/dashboard1"
+        android:background="#ECECEC"
+        />
        >
         <SeekBar
-            android:id="@+id/seekBar"
+            android:id="@+id/seekBar1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -31,6 +43,5 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btn"/>
-    </LinearLayout>
+            android:id="@+id/btn1"/>
 </LinearLayout>
